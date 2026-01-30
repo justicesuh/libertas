@@ -2,6 +2,24 @@
 
 let blocklists = {};
 
+// Generate unique ID
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+}
+
+// Create default blocklists from presets
+function createDefaultBlocklists() {
+  const defaults = {};
+  for (const name of Object.keys(presets)) {
+    defaults[generateId()] = {
+      name,
+      sites: [...presets[name]],
+      enabled: false
+    };
+  }
+  return defaults;
+}
+
 // Get all blocked sites from enabled blocklists
 function getAllBlockedSites() {
   const sites = [];
@@ -23,9 +41,8 @@ function getAllBlockedSites() {
 browser.storage.local.get(['blocklists', 'blockedSites']).then((result) => {
   // Migrate from old format if needed
   if (result.blockedSites && !result.blocklists) {
-    const id = Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
     blocklists = {
-      [id]: {
+      [generateId()]: {
         name: 'Default',
         sites: result.blockedSites,
         enabled: true
@@ -33,8 +50,12 @@ browser.storage.local.get(['blocklists', 'blockedSites']).then((result) => {
     };
     browser.storage.local.set({ blocklists });
     browser.storage.local.remove('blockedSites');
+  } else if (!result.blocklists) {
+    // First install - create default blocklists
+    blocklists = createDefaultBlocklists();
+    browser.storage.local.set({ blocklists });
   } else {
-    blocklists = result.blocklists || {};
+    blocklists = result.blocklists;
   }
   updateBlockingRules();
 });

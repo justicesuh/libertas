@@ -13,6 +13,19 @@ function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 }
 
+// Create default blocklists from presets
+function createDefaultBlocklists() {
+  const defaults = {};
+  for (const name of Object.keys(presets)) {
+    defaults[generateId()] = {
+      name,
+      sites: [...presets[name]],
+      enabled: false
+    };
+  }
+  return defaults;
+}
+
 // Load blocklists on popup open
 async function loadBlocklists() {
   const result = await browser.storage.local.get(['blocklists', 'blockedSites']);
@@ -28,8 +41,12 @@ async function loadBlocklists() {
     };
     await saveBlocklists();
     await browser.storage.local.remove('blockedSites');
+  } else if (!result.blocklists) {
+    // First install - create default blocklists
+    blocklists = createDefaultBlocklists();
+    await saveBlocklists();
   } else {
-    blocklists = result.blocklists || {};
+    blocklists = result.blocklists;
   }
 
   renderList();
