@@ -3,6 +3,14 @@
   "name": "Libertas Site Blocker",
   "version": "1.0.0",
   "description": "Block distracting websites to improve focus and productivity",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "libertas@justicesuh.com",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
   "permissions": [
     "webRequest",
     "webRequestBlocking",
