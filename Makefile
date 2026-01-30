@@ -15,7 +15,7 @@ FILES = manifest.json \
         icons/
 
 build:
-	zip -r $(NAME).zip $(FILES)
+	zip -r $(NAME)-$(VERSION).zip $(FILES)
 
 clean:
 	rm -f *.zip *.xpi
