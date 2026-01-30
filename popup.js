@@ -58,13 +58,6 @@ async function addBlocklist() {
   listInput.value = '';
 }
 
-// Delete a blocklist
-async function deleteBlocklist(id) {
-  delete blocklists[id];
-  await saveBlocklists();
-  renderList();
-}
-
 // Toggle blocklist enabled state
 async function toggleBlocklist(id) {
   blocklists[id].enabled = !blocklists[id].enabled;
@@ -95,15 +88,14 @@ function renderList() {
     const li = document.createElement('li');
     li.className = 'blocklist-item';
     li.innerHTML = `
-      <label class="toggle">
-        <input type="checkbox" ${list.enabled ? 'checked' : ''} data-id="${id}" class="toggle-checkbox">
-        <span class="toggle-slider"></span>
-      </label>
       <div class="blocklist-info" data-id="${id}">
         <span class="blocklist-name">${list.name}</span>
         <span class="blocklist-count">${list.sites.length} sites</span>
       </div>
-      <button class="delete-btn" data-id="${id}">&times;</button>
+      <label class="toggle">
+        <input type="checkbox" ${list.enabled ? 'checked' : ''} data-id="${id}" class="toggle-checkbox">
+        <span class="toggle-slider"></span>
+      </label>
     `;
     blocklistsEl.appendChild(li);
   });
@@ -119,13 +111,9 @@ listInput.addEventListener('keypress', (e) => {
 });
 
 blocklistsEl.addEventListener('click', (e) => {
-  const id = e.target.dataset.id;
-
-  if (e.target.classList.contains('delete-btn')) {
-    deleteBlocklist(id);
-  } else if (e.target.classList.contains('blocklist-info') ||
-             e.target.classList.contains('blocklist-name') ||
-             e.target.classList.contains('blocklist-count')) {
+  if (e.target.classList.contains('blocklist-info') ||
+      e.target.classList.contains('blocklist-name') ||
+      e.target.classList.contains('blocklist-count')) {
     const infoEl = e.target.closest('.blocklist-info');
     if (infoEl) {
       openBlocklist(infoEl.dataset.id);

@@ -1,6 +1,7 @@
 // Blocklist page script for managing sites in a blocklist
 
 const backBtn = document.getElementById('back-btn');
+const deleteListBtn = document.getElementById('delete-list-btn');
 const listNameEl = document.getElementById('list-name');
 const siteInput = document.getElementById('site-input');
 const addBtn = document.getElementById('add-btn');
@@ -90,10 +91,19 @@ function renderList() {
   });
 }
 
+// Delete the entire blocklist
+async function deleteBlocklist() {
+  delete blocklists[listId];
+  await saveBlocklists();
+  window.location.href = 'popup.html';
+}
+
 // Event listeners
 backBtn.addEventListener('click', () => {
   window.location.href = 'popup.html';
 });
+
+deleteListBtn.addEventListener('click', deleteBlocklist);
 
 addBtn.addEventListener('click', addSite);
 

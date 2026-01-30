@@ -37,9 +37,24 @@ h1 {
 
 .header-row h1 {
   margin-bottom: 0;
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.delete-list-btn {
+  background: none;
+  color: #86868b;
+  padding: 4px 8px;
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.delete-list-btn:hover {
+  color: #ff3b30;
+  background: none;
 }
 
 .back-btn {
