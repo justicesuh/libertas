@@ -83,10 +83,18 @@ function renderList() {
 
   sites.forEach(site => {
     const li = document.createElement('li');
-    li.innerHTML = `
-      <span class="site-name">${site}</span>
-      <button class="remove-btn" data-site="${site}">&times;</button>
-    `;
+
+    const siteName = document.createElement('span');
+    siteName.className = 'site-name';
+    siteName.textContent = site;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.dataset.site = site;
+    removeBtn.textContent = '\u00D7';
+
+    li.appendChild(siteName);
+    li.appendChild(removeBtn);
     blockedList.appendChild(li);
   });
 }

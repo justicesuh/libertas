@@ -104,16 +104,39 @@ function renderList() {
     const list = blocklists[id];
     const li = document.createElement('li');
     li.className = 'blocklist-item';
-    li.innerHTML = `
-      <div class="blocklist-info" data-id="${id}">
-        <span class="blocklist-name">${list.name}</span>
-        <span class="blocklist-count">${list.sites.length} ${list.sites.length === 1 ? 'site' : 'sites'}</span>
-      </div>
-      <label class="toggle">
-        <input type="checkbox" ${list.enabled ? 'checked' : ''} data-id="${id}" class="toggle-checkbox">
-        <span class="toggle-slider"></span>
-      </label>
-    `;
+
+    const info = document.createElement('div');
+    info.className = 'blocklist-info';
+    info.dataset.id = id;
+
+    const name = document.createElement('span');
+    name.className = 'blocklist-name';
+    name.textContent = list.name;
+
+    const count = document.createElement('span');
+    count.className = 'blocklist-count';
+    count.textContent = `${list.sites.length} ${list.sites.length === 1 ? 'site' : 'sites'}`;
+
+    info.appendChild(name);
+    info.appendChild(count);
+
+    const toggle = document.createElement('label');
+    toggle.className = 'toggle';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = list.enabled;
+    checkbox.dataset.id = id;
+    checkbox.className = 'toggle-checkbox';
+
+    const slider = document.createElement('span');
+    slider.className = 'toggle-slider';
+
+    toggle.appendChild(checkbox);
+    toggle.appendChild(slider);
+
+    li.appendChild(info);
+    li.appendChild(toggle);
     blocklistsEl.appendChild(li);
   });
 }
