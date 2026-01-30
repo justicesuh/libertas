@@ -1,17 +1,48 @@
 // Background script for blocking websites
 
-let blockedSites = [];
+let blocklists = {};
 
-// Load blocked sites from storage on startup
-browser.storage.local.get('blockedSites').then((result) => {
-  blockedSites = result.blockedSites || [];
+// Get all blocked sites from enabled blocklists
+function getAllBlockedSites() {
+  const sites = [];
+  if (!blocklists || typeof blocklists !== 'object') {
+    return sites;
+  }
+  for (const id of Object.keys(blocklists)) {
+    const list = blocklists[id];
+    // Default to enabled if not explicitly disabled
+    const isEnabled = list && list.enabled !== false;
+    if (isEnabled && Array.isArray(list.sites)) {
+      sites.push(...list.sites);
+    }
+  }
+  return sites;
+}
+
+// Load blocklists from storage on startup
+browser.storage.local.get(['blocklists', 'blockedSites']).then((result) => {
+  // Migrate from old format if needed
+  if (result.blockedSites && !result.blocklists) {
+    const id = Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    blocklists = {
+      [id]: {
+        name: 'Default',
+        sites: result.blockedSites,
+        enabled: true
+      }
+    };
+    browser.storage.local.set({ blocklists });
+    browser.storage.local.remove('blockedSites');
+  } else {
+    blocklists = result.blocklists || {};
+  }
   updateBlockingRules();
 });
 
 // Listen for storage changes
 browser.storage.onChanged.addListener((changes, area) => {
-  if (area === 'local' && changes.blockedSites) {
-    blockedSites = changes.blockedSites.newValue || [];
+  if (area === 'local' && changes.blocklists) {
+    blocklists = changes.blocklists.newValue || {};
     updateBlockingRules();
   }
 });
@@ -21,6 +52,7 @@ function shouldBlock(url) {
   try {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname.toLowerCase();
+    const blockedSites = getAllBlockedSites();
 
     return blockedSites.some(site => {
       const pattern = site.toLowerCase();
@@ -51,6 +83,7 @@ function updateBlockingRules() {
   }
 
   // Only add listener if there are sites to block
+  const blockedSites = getAllBlockedSites();
   if (blockedSites.length > 0) {
     browser.webRequest.onBeforeRequest.addListener(
       blockRequest,
@@ -60,5 +93,3 @@ function updateBlockingRules() {
   }
 }
 
-// Initialize blocking
-updateBlockingRules();

@@ -1,94 +1,143 @@
-// Popup script for managing blocked sites
+// Popup script for managing blocklists
 
-const siteInput = document.getElementById('site-input');
+const listInput = document.getElementById('list-input');
 const addBtn = document.getElementById('add-btn');
-const blockedList = document.getElementById('blocked-list');
+const blocklistsEl = document.getElementById('blocklists');
 const countEl = document.getElementById('count');
 const emptyState = document.getElementById('empty-state');
 
-let blockedSites = [];
+let blocklists = {};
 
-// Load blocked sites on popup open
-async function loadBlockedSites() {
-  const result = await browser.storage.local.get('blockedSites');
-  blockedSites = result.blockedSites || [];
-  renderList();
+// Generate unique ID
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 }
 
-// Save blocked sites to storage
-async function saveBlockedSites() {
-  await browser.storage.local.set({ blockedSites });
-}
+// Load blocklists on popup open
+async function loadBlocklists() {
+  const result = await browser.storage.local.get(['blocklists', 'blockedSites']);
 
-// Normalize site input (remove protocol, www, trailing slashes)
-function normalizeSite(site) {
-  let normalized = site.trim().toLowerCase();
-  normalized = normalized.replace(/^(https?:\/\/)?(www\.)?/, '');
-  normalized = normalized.replace(/\/.*$/, '');
-  return normalized;
-}
-
-// Add a site to the block list
-async function addSite() {
-  const site = normalizeSite(siteInput.value);
-
-  if (!site) return;
-
-  if (blockedSites.includes(site)) {
-    siteInput.value = '';
-    return;
+  // Migrate from old format if needed
+  if (result.blockedSites && !result.blocklists) {
+    blocklists = {
+      [generateId()]: {
+        name: 'Default',
+        sites: result.blockedSites,
+        enabled: true
+      }
+    };
+    await saveBlocklists();
+    await browser.storage.local.remove('blockedSites');
+  } else {
+    blocklists = result.blocklists || {};
   }
 
-  blockedSites.push(site);
-  await saveBlockedSites();
-  renderList();
-  siteInput.value = '';
-}
-
-// Remove a site from the block list
-async function removeSite(site) {
-  blockedSites = blockedSites.filter(s => s !== site);
-  await saveBlockedSites();
   renderList();
 }
 
-// Render the blocked sites list
+// Save blocklists to storage
+async function saveBlocklists() {
+  await browser.storage.local.set({ blocklists });
+}
+
+// Add a new blocklist
+async function addBlocklist() {
+  const name = listInput.value.trim();
+
+  if (!name) return;
+
+  const id = generateId();
+  blocklists[id] = {
+    name,
+    sites: [],
+    enabled: true
+  };
+
+  await saveBlocklists();
+  renderList();
+  listInput.value = '';
+}
+
+// Delete a blocklist
+async function deleteBlocklist(id) {
+  delete blocklists[id];
+  await saveBlocklists();
+  renderList();
+}
+
+// Toggle blocklist enabled state
+async function toggleBlocklist(id) {
+  blocklists[id].enabled = !blocklists[id].enabled;
+  await saveBlocklists();
+  renderList();
+}
+
+// Open blocklist editor
+function openBlocklist(id) {
+  window.location.href = `blocklist.html?id=${id}`;
+}
+
+// Render the blocklists
 function renderList() {
-  blockedList.innerHTML = '';
-  countEl.textContent = blockedSites.length;
+  blocklistsEl.innerHTML = '';
+  const ids = Object.keys(blocklists);
+  countEl.textContent = ids.length;
 
-  if (blockedSites.length === 0) {
+  if (ids.length === 0) {
     emptyState.classList.remove('hidden');
     return;
   }
 
   emptyState.classList.add('hidden');
 
-  blockedSites.forEach(site => {
+  ids.forEach(id => {
+    const list = blocklists[id];
     const li = document.createElement('li');
+    li.className = 'blocklist-item';
     li.innerHTML = `
-      <span class="site-name">${site}</span>
-      <button class="remove-btn" data-site="${site}">&times;</button>
+      <label class="toggle">
+        <input type="checkbox" ${list.enabled ? 'checked' : ''} data-id="${id}" class="toggle-checkbox">
+        <span class="toggle-slider"></span>
+      </label>
+      <div class="blocklist-info" data-id="${id}">
+        <span class="blocklist-name">${list.name}</span>
+        <span class="blocklist-count">${list.sites.length} sites</span>
+      </div>
+      <button class="delete-btn" data-id="${id}">&times;</button>
     `;
-    blockedList.appendChild(li);
+    blocklistsEl.appendChild(li);
   });
 }
 
 // Event listeners
-addBtn.addEventListener('click', addSite);
+addBtn.addEventListener('click', addBlocklist);
 
-siteInput.addEventListener('keypress', (e) => {
+listInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
-    addSite();
+    addBlocklist();
   }
 });
 
-blockedList.addEventListener('click', (e) => {
-  if (e.target.classList.contains('remove-btn')) {
-    const site = e.target.dataset.site;
-    removeSite(site);
+blocklistsEl.addEventListener('click', (e) => {
+  const id = e.target.dataset.id;
+
+  if (e.target.classList.contains('delete-btn')) {
+    deleteBlocklist(id);
+  } else if (e.target.classList.contains('blocklist-info') ||
+             e.target.classList.contains('blocklist-name') ||
+             e.target.classList.contains('blocklist-count')) {
+    const infoEl = e.target.closest('.blocklist-info');
+    if (infoEl) {
+      openBlocklist(infoEl.dataset.id);
+    }
+  }
+});
+
+blocklistsEl.addEventListener('change', (e) => {
+  if (e.target.classList.contains('toggle-checkbox')) {
+    toggleBlocklist(e.target.dataset.id);
   }
 });
 
 // Initialize
-loadBlockedSites();
+loadBlocklists();
