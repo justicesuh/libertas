@@ -12,17 +12,22 @@ A Firefox browser extension that blocks distracting websites to improve focus an
   - Gaming (Steam, Epic Games, etc.)
   - Shopping (Amazon, eBay, etc.)
 - **Enable/Disable Lists**: Toggle individual blocklists on or off without deleting them
+- **Reorderable Lists**: Drag and drop blocklists to organize them
 - **Subdomain Blocking**: Blocking a domain automatically blocks all its subdomains
 - **Inspirational Quotes**: Blocked page displays motivational quotes to encourage productivity
 
 ## Installation
+
+### Temporary Installation (Development)
 
 1. Open Firefox and navigate to `about:debugging`
 2. Click "This Firefox" in the sidebar
 3. Click "Load Temporary Add-on"
 4. Select any file in the `libertas` directory (e.g., `manifest.json`)
 
-For permanent installation, the extension needs to be signed and installed through Firefox Add-ons.
+### Permanent Installation
+
+For permanent installation, the extension needs to be signed. See [Signing the Extension](#signing-the-extension) below.
 
 ## Usage
 
@@ -30,7 +35,43 @@ For permanent installation, the extension needs to be signed and installed throu
 2. **Create a blocklist**: Enter a name and click "Add"
 3. **Add sites to a blocklist**: Click on a blocklist name to open it, then enter domains to block
 4. **Enable/Disable a blocklist**: Use the toggle switch on the right side of each blocklist
-5. **Delete a blocklist**: Open the blocklist and click the × button in the header
+5. **Reorder blocklists**: Drag and drop using the grip icon (⠇⠇) on the left side
+6. **Delete a blocklist**: Open the blocklist and click the × button in the header
+
+## Build
+
+The project includes a Makefile for common tasks:
+
+```bash
+# Create a zip file for distribution
+make build
+
+# Remove all zip and xpi files
+make clean
+```
+
+## Signing the Extension
+
+To install the extension permanently in Firefox, it must be signed by Mozilla.
+
+### Option 1: Sign for Self-Distribution
+
+1. Create a [Mozilla Add-ons account](https://addons.mozilla.org/developers/)
+2. Install web-ext: `npm install -g web-ext`
+3. Get your API credentials from the [Add-ons Developer Hub](https://addons.mozilla.org/developers/addon/api/key/)
+4. Sign the extension:
+   ```bash
+   web-ext sign --api-key=YOUR_JWT_ISSUER --api-secret=YOUR_JWT_SECRET
+   ```
+5. Install the signed `.xpi` file by dragging it into Firefox or using `about:addons`
+
+### Option 2: Publish on Firefox Add-ons
+
+1. Create a [Mozilla Add-ons account](https://addons.mozilla.org/developers/)
+2. Build the extension: `make build`
+3. Go to [Submit a New Add-on](https://addons.mozilla.org/developers/addon/submit/)
+4. Upload the zip file and follow the submission process
+5. Once approved, the extension will be available for public installation
 
 ## How It Works
 

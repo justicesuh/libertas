@@ -1,0 +1,23 @@
+# Packaged extension
+*.xpi
+*.zip
+web-ext-artifacts/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (if using build tools)
+node_modules/
+npm-debug.log
+
+# Temporary files
+*.tmp
+*.log

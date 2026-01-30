@@ -173,6 +173,31 @@ li .remove-btn:hover {
 /* Blocklist item styles */
 .blocklist-item {
   gap: 10px;
+  cursor: grab;
+  transition: opacity 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.blocklist-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.blocklist-item.drag-over {
+  border-color: #0071e3;
+  background: #f0f7ff;
+}
+
+.drag-handle {
+  color: #c7c7cc;
+  font-size: 12px;
+  letter-spacing: -3px;
+  cursor: grab;
+  user-select: none;
+  margin-right: 6px;
+}
+
+.blocklist-item.dragging .drag-handle {
+  cursor: grabbing;
 }
 
 .blocklist-info {
