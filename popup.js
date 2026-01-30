@@ -90,7 +90,7 @@ function renderList() {
     li.innerHTML = `
       <div class="blocklist-info" data-id="${id}">
         <span class="blocklist-name">${list.name}</span>
-        <span class="blocklist-count">${list.sites.length} sites</span>
+        <span class="blocklist-count">${list.sites.length} ${list.sites.length === 1 ? 'site' : 'sites'}</span>
       </div>
       <label class="toggle">
         <input type="checkbox" ${list.enabled ? 'checked' : ''} data-id="${id}" class="toggle-checkbox">
