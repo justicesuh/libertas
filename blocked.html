@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Site Blocked</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 18px;
+      color: #888;
+      margin-bottom: 32px;
+    }
+
+    .quote {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border-left: 4px solid #e94560;
+    }
+
+    .quote p {
+      font-style: italic;
+      color: #ccc;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .quote .author {
+      font-size: 14px;
+      color: #888;
+      font-style: normal;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 32px;
+      padding: 12px 24px;
+      background: #e94560;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #ff6b6b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🛡️</div>
+    <h1>Site Blocked</h1>
+    <p>This site has been blocked by Libertas.</p>
+
+    <div class="quote">
+      <p>"The secret of freedom lies in educating people, whereas the secret of tyranny is in keeping them ignorant."</p>
+      <span class="author">— Maximilien Robespierre</span>
+    </div>
+
+    <a href="about:newtab" class="btn">Go Back</a>
+  </div>
+
+  <script>
+    // Inspirational quotes about freedom and discipline
+    const quotes = [
+      {
+        text: "The secret of freedom lies in educating people, whereas the secret of tyranny is in keeping them ignorant.",
+        author: "Maximilien Robespierre"
+      },
+      {
+        text: "Discipline is the bridge between goals and accomplishment.",
+        author: "Jim Rohn"
+      },
+      {
+        text: "Freedom is not the absence of commitments, but the ability to choose.",
+        author: "Paulo Coelho"
+      },
+      {
+        text: "The only way to do great work is to love what you do.",
+        author: "Steve Jobs"
+      },
+      {
+        text: "Focus on being productive instead of busy.",
+        author: "Tim Ferriss"
+      }
+    ];
+
+    // Display a random quote
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+    document.querySelector('.quote p').textContent = `"${quote.text}"`;
+    document.querySelector('.quote .author').textContent = `— ${quote.author}`;
+  </script>
+</body>
+</html>

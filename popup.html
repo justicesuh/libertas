@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Libertas</h1>
+    <p class="subtitle">Site Blocker</p>
+
+    <div class="input-group">
+      <input type="text" id="site-input" placeholder="example.com">
+      <button id="add-btn">Block</button>
+    </div>
+
+    <div class="list-header">
+      <span>Blocked Sites</span>
+      <span id="count">0</span>
+    </div>
+
+    <ul id="blocked-list"></ul>
+
+    <div id="empty-state">No sites blocked yet</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
