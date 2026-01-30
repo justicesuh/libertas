@@ -14,7 +14,7 @@ function createDefaultBlocklists() {
     defaults[generateId()] = {
       name,
       sites: [...presets[name]],
-      enabled: false
+      enabled: true
     };
   }
   return defaults;
